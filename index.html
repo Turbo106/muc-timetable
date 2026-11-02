@@ -312,6 +312,7 @@
 </div>
 
 <script>
+window.__BUILD__ = "202611030207";
 (() => {
   "use strict";
 
@@ -747,6 +748,40 @@
       setTimeout(() => { busy = false; }, 540);
     });
   });
+
+
+  /* ---------- 自动升级检测 ---------- */
+  (() => {
+    const build = window.__BUILD__ || "0";
+    const bar = document.createElement("div");
+    bar.id = "upbar";
+    bar.style.cssText = "position:fixed;left:50%;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(14px);z-index:55;display:none;align-items:center;gap:10px;padding:9px 15px;border-radius:15px;background:#fffdfa;border:1px solid rgba(231,182,197,.6);box-shadow:0 12px 26px -14px rgba(107,93,82,.6);font-size:12.5px;color:#6b5d52;white-space:nowrap;opacity:0;transition:all .35s cubic-bezier(.25,.8,.3,1)";
+    bar.innerHTML = '<span>有新版本</span><b style="color:#c98fa2;font-weight:600">点此更新</b>';
+    document.body.appendChild(bar);
+
+    const SEEN = "tt-build-seen";
+    const show = (v) => {
+      bar.style.display = "flex";
+      requestAnimationFrame(() => { bar.style.opacity = "1"; bar.style.transform = "translateX(-50%) translateY(0)"; });
+      bar.addEventListener("click", () => {
+        try { localStorage.setItem(SEEN, v); } catch (e) {}
+        location.replace(location.pathname + "?v=" + encodeURIComponent(v));
+      });
+    };
+
+    setTimeout(() => {
+      fetch("version.json?t=" + Date.now(), { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((v) => {
+          if (!v || !v.build || v.build === build) return;
+          let seen = "";
+          try { seen = localStorage.getItem(SEEN) || ""; } catch (e) {}
+          if (seen === v.build) return;
+          show(v.build);
+        })
+        .catch(() => {});
+    }, 2500);
+  })();
 
   const t = todayIdx();
   if (t > 0) $("range").textContent = `11.02 – 11.08 · 第10教学周 · 今天是${WEEK[t-1].w}`;
