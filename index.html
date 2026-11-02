@@ -36,8 +36,8 @@
 
   body::before{
     content:"";position:fixed;inset:-2%;z-index:0;pointer-events:none;
-    background:url("assets/bg.jpg") center 16% / cover no-repeat;
-    opacity:.5;
+    background:url("assets/bg.jpg") center 14% / cover no-repeat;
+    opacity:.4;
     filter:saturate(1.06);
   }
   body::after{
@@ -70,7 +70,7 @@
   .kicker{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;color:var(--dim);background:rgba(255,255,255,.75);border:2px solid var(--outline);border-radius:999px;padding:4px 12px 4px 8px}
   .kicker .face{width:20px;height:20px;display:block}
   .title-row{display:flex;align-items:center;gap:10px;margin-top:14px}
-  .bear{width:52px;height:52px;flex:0 0 auto;animation:sway 4.5s ease-in-out infinite}
+  .bear{width:auto;height:58px;flex:0 0 auto;animation:sway 4.5s ease-in-out infinite;filter:drop-shadow(0 4px 6px rgba(107,82,64,.18))}
   @keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
   h1{margin:0;font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.15;color:#4a382b}
   h1 em{font-style:normal;color:#ff7fb0}
@@ -99,9 +99,9 @@
   .dh.today .w{color:#c9628e}
   .dh.today .d{color:#d1618f}
 
-  .grid{position:relative;display:flex;min-width:min-content;padding:0 20px 16px;background:rgba(255,255,255,.56);border-radius:26px;box-shadow:0 10px 30px -24px rgba(107,82,64,.7)}
+  .grid{position:relative;display:flex;min-width:min-content;padding:0 20px 16px;background:rgba(255,255,255,.82);border-radius:26px;box-shadow:0 10px 30px -24px rgba(107,82,64,.7)}
 
-  .taxis{position:sticky;left:0;z-index:3;flex:0 0 var(--gutter);background:linear-gradient(90deg,rgba(255,255,255,.94) 84%,rgba(255,255,255,0));padding-right:6px}
+  .taxis{position:sticky;left:0;z-index:3;flex:0 0 var(--gutter);background:linear-gradient(90deg,rgba(255,252,250,.98) 86%,rgba(255,252,250,0));padding-right:6px}
   .taxis .slot{height:var(--row);display:flex;flex-direction:column;justify-content:center;gap:1px;color:var(--faint)}
   .taxis .slot b{font-size:12px;font-weight:800;color:var(--dim);font-variant-numeric:tabular-nums}
   .taxis .slot span{font-size:9px;opacity:.85;font-variant-numeric:tabular-nums}
@@ -182,6 +182,8 @@
   .btn.danger{color:#c0546f;border-color:#e3a3b6}
 
   .foot{margin:22px 20px 0;text-align:center}
+  .foot .ebi{height:34px;width:auto;display:block;margin:0 auto 2px;opacity:.95;animation:bob 3.6s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
   .foot button{background:none;border:0;color:var(--faint);font:inherit;font-size:11.5px;font-weight:700;letter-spacing:.06em;padding:10px;cursor:pointer}
   .foot button:active{color:var(--ink)}
 
@@ -217,18 +219,7 @@
       <span>2026–2027 · 第 1 学期</span>
     </div>
     <div class="title-row">
-      <svg class="bear" viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="18.5" cy="19.5" r="7.4" fill="#fff" stroke="#6b5240" stroke-width="2.6"/>
-        <circle cx="18.5" cy="19.5" r="3.6" fill="#ffd9e6"/>
-        <circle cx="45.5" cy="19.5" r="7.4" fill="#fff" stroke="#6b5240" stroke-width="2.6"/>
-        <circle cx="45.5" cy="19.5" r="3.6" fill="#ffd9e6"/>
-        <ellipse cx="32" cy="37" rx="19" ry="16.6" fill="#fff" stroke="#6b5240" stroke-width="2.8"/>
-        <circle cx="25.4" cy="34.4" r="2.1" fill="#4a382b"/>
-        <circle cx="38.6" cy="34.4" r="2.1" fill="#4a382b"/>
-        <path d="M29.4 40.6q2.6 2.2 5.2 0" stroke="#4a382b" stroke-width="1.9" fill="none" stroke-linecap="round"/>
-        <ellipse cx="19.6" cy="41" rx="3.6" ry="2.5" fill="#ffc9de" opacity=".85"/>
-        <ellipse cx="44.4" cy="41" rx="3.6" ry="2.5" fill="#ffc9de" opacity=".85"/>
-      </svg>
+      <img class="bear" src="assets/shirokuma.png" alt="" />
       <h1>第 <em>10</em> 周课表</h1>
     </div>
     <div class="sub" id="range">11.02 – 11.08 · 第10教学周</div>
@@ -243,6 +234,7 @@
   <div class="board" id="board"></div>
 
   <div class="foot">
+    <img class="ebi" src="assets/ebi.png" alt="" />
     <button id="reset">恢复默认课表</button>
   </div>
 </div>
