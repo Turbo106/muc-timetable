@@ -178,6 +178,8 @@
   .btn.danger{color:#b8748a;border-color:rgba(201,143,162,.3)}
 
   .foot{margin:26px 22px 0;text-align:center}
+  .mig-hint{font-size:12px;color:var(--dim);line-height:1.7;margin:10px 0 8px}
+  .mig-box{font-size:11px;line-height:1.6;color:var(--dim);background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:12px;padding:10px;word-break:break-all;max-height:110px;overflow-y:auto;font-family:ui-monospace,Consolas,monospace}
   .foot .deck{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:4px}
   .foot .trio{width:auto;height:58px}
   .foot .ebi{height:34px;width:auto;animation:bob 5s ease-in-out infinite}
@@ -237,6 +239,7 @@
 
   <div class="foot">
     <div class="deck"><img class="trio" src="assets/trio.png" alt="" /><img class="ebi" src="assets/ebi.png" alt="" /></div>
+    <button id="migrate">换手机 · 迁移数据</button>
     <button id="reset">恢复默认课表</button>
   </div>
 </div>
@@ -258,6 +261,20 @@
     <button class="btn" id="s-edit">编辑</button>
     <button class="btn" id="s-close">收起</button>
   </div>
+</div>
+
+<div class="sheet" id="migrateSheet">
+  <div class="grab"></div>
+  <h3 style="margin:0">换手机 · 迁移数据</h3>
+  <p class="mig-hint">把下面的链接发到新手机的微信里，点开就会自动导入课表。</p>
+  <div class="mig-box" id="migLink"></div>
+  <div class="actions">
+    <button class="btn" id="mig-copy">复制链接</button>
+    <button class="btn primary" id="mig-close">收起</button>
+  </div>
+  <p class="mig-hint" style="margin-top:14px">已经有链接了？也可以直接在下面粘贴导入：</p>
+  <div class="field"><input id="mig-paste" placeholder="粘贴迁移链接或数据码" /></div>
+  <div class="actions"><button class="btn" id="mig-import">导入</button></div>
 </div>
 
 <div class="sheet" id="editor">
@@ -611,6 +628,98 @@
     }
     removeCourse();
   });
+
+
+  /* ---------- 数据迁移 ---------- */
+  const b64enc = (obj) => {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let bin = "";
+    bytes.forEach((b) => { bin += String.fromCharCode(b); });
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+  const b64dec = (str) => {
+    const b = str.trim().replace(/-/g, "+").replace(/_/g, "/");
+    const bin = atob(b);
+    const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  };
+
+  function toast(msg) {
+    let el = document.getElementById("toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "toast";
+      el.style.cssText = "position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-8px);z-index:60;padding:10px 18px;border-radius:14px;background:#fffdfa;border:1px solid rgba(107,93,82,.16);box-shadow:0 10px 24px -14px rgba(107,93,82,.7);font-size:13px;color:#6b5d52;opacity:0;transition:all .3s cubic-bezier(.25,.8,.3,1)";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    requestAnimationFrame(() => { el.style.opacity = "1"; el.style.transform = "translateX(-50%) translateY(0)"; });
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateX(-50%) translateY(-8px)"; }, 2200);
+  }
+
+  function importPayload(str) {
+    try {
+      const raw = str.includes("import=") ? decodeURIComponent(str.split("import=")[1].split("&")[0]) : str;
+      const data = b64dec(raw);
+      if (!data || (!Array.isArray(data.tianmuhu) && !Array.isArray(data.jiangjunlu))) throw new Error("格式不对");
+      localStorage.setItem(KEY, JSON.stringify({
+        tianmuhu: data.tianmuhu || [],
+        jiangjunlu: data.jiangjunlu || []
+      }));
+      DATA = load();
+      render(current, true);
+      toast("课表已导入 ✓");
+      return true;
+    } catch (e) {
+      toast("导入失败：链接不完整");
+      return false;
+    }
+  }
+
+  $("migrate").addEventListener("click", () => {
+    const payload = b64enc({ tianmuhu: DATA.tianmuhu.courses, jiangjunlu: DATA.jiangjunlu.courses });
+    const base = location.origin + location.pathname;
+    $("migLink").textContent = base + "?import=" + payload;
+    closeSheet();
+    veil.classList.add("on");
+    $("migrateSheet").classList.add("on");
+  });
+  $("mig-close").addEventListener("click", () => { veil.classList.remove("on"); $("migrateSheet").classList.remove("on"); });
+  $("mig-copy").addEventListener("click", async () => {
+    const text = $("migLink").textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("已复制，去新手机粘贴");
+    } catch (e) {
+      const r = document.createRange();
+      r.selectNodeContents($("migLink"));
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(r);
+      toast("已选中，长按复制");
+    }
+  });
+  $("mig-import").addEventListener("click", () => {
+    const v = $("mig-paste").value.trim();
+    if (!v) { toast("先粘贴链接"); return; }
+    if (importPayload(v)) {
+      $("mig-paste").value = "";
+      veil.classList.remove("on");
+      $("migrateSheet").classList.remove("on");
+    }
+  });
+
+  // 打开带 ?import= 的链接时自动导入
+  (() => {
+    const params = new URLSearchParams(location.search);
+    const payload = params.get("import");
+    if (!payload) return;
+    if (importPayload(payload)) {
+      params.delete("import");
+      const qs = params.toString();
+      history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
+    }
+  })();
 
   let resetArmed = false;
   $("reset").addEventListener("click", () => {
