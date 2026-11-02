@@ -34,8 +34,19 @@
     overflow-x:hidden;min-height:100dvh;
   }
 
+  body::before{
+    content:"";position:fixed;inset:-2%;z-index:0;pointer-events:none;
+    background:url("assets/bg.jpg") center 16% / cover no-repeat;
+    opacity:.5;
+    filter:saturate(1.06);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(234,247,253,.30) 0%,rgba(219,239,250,.42) 45%,rgba(236,248,253,.55) 100%);
+  }
+
   /* ---------- scenery ---------- */
-  .scenery{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .scenery{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
   .scenery .rainbow{position:absolute;top:-6vh;left:50%;transform:translateX(-50%);width:120vw;opacity:.5}
   .bubble{position:absolute;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),rgba(255,255,255,.2) 46%,rgba(255,214,236,.5) 100%);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 0 14px rgba(255,255,255,.8);animation:float 9s ease-in-out infinite}
   .b1{width:54px;height:54px;left:5%;top:15%;animation-delay:-1s;opacity:.9}
@@ -79,8 +90,8 @@
   .scroller{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:8px}
   .scroller::-webkit-scrollbar{display:none}
 
-  .head{position:sticky;top:0;z-index:6;display:flex;min-width:min-content;padding:0 20px 8px;background:linear-gradient(180deg,rgba(234,247,253,.98) 64%,rgba(234,247,253,0))}
-  .head .spacer{flex:0 0 var(--gutter);position:sticky;left:0;z-index:7;background:linear-gradient(90deg,rgba(234,247,253,.98) 78%,rgba(234,247,253,0))}
+  .head{position:sticky;top:0;z-index:6;display:flex;min-width:min-content;padding:6px 20px 8px;background:linear-gradient(180deg,rgba(255,255,255,.92) 72%,rgba(255,255,255,.5))}
+  .head .spacer{flex:0 0 var(--gutter);position:sticky;left:0;z-index:7;background:linear-gradient(90deg,rgba(255,255,255,.95) 82%,rgba(255,255,255,0))}
   .dh{flex:0 0 var(--col);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 5px;border-radius:14px}
   .dh .w{font-size:11px;letter-spacing:.04em;color:var(--faint);font-weight:600}
   .dh .d{font-size:13.5px;font-weight:800;color:var(--dim);font-variant-numeric:tabular-nums}
@@ -88,9 +99,9 @@
   .dh.today .w{color:#c9628e}
   .dh.today .d{color:#d1618f}
 
-  .grid{position:relative;display:flex;min-width:min-content;padding:0 20px 16px}
+  .grid{position:relative;display:flex;min-width:min-content;padding:0 20px 16px;background:rgba(255,255,255,.56);border-radius:26px;box-shadow:0 10px 30px -24px rgba(107,82,64,.7)}
 
-  .taxis{position:sticky;left:0;z-index:3;flex:0 0 var(--gutter);background:linear-gradient(90deg,rgba(234,247,253,.98) 82%,rgba(234,247,253,0));padding-right:6px}
+  .taxis{position:sticky;left:0;z-index:3;flex:0 0 var(--gutter);background:linear-gradient(90deg,rgba(255,255,255,.94) 84%,rgba(255,255,255,0));padding-right:6px}
   .taxis .slot{height:var(--row);display:flex;flex-direction:column;justify-content:center;gap:1px;color:var(--faint)}
   .taxis .slot b{font-size:12px;font-weight:800;color:var(--dim);font-variant-numeric:tabular-nums}
   .taxis .slot span{font-size:9px;opacity:.85;font-variant-numeric:tabular-nums}
@@ -206,15 +217,17 @@
       <span>2026–2027 · 第 1 学期</span>
     </div>
     <div class="title-row">
-      <svg class="bear" viewBox="0 0 60 60" aria-hidden="true">
-        <path d="M14 20c-3-6 2-11 8-8" fill="#fff" stroke="#6b5240" stroke-width="2.4" stroke-linecap="round"/>
-        <path d="M46 20c3-6-2-11-8-8" fill="#fff" stroke="#6b5240" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="30" cy="33" r="17" fill="#fff" stroke="#6b5240" stroke-width="2.6"/>
-        <circle cx="24" cy="31" r="1.9" fill="#4a382b"/>
-        <circle cx="36" cy="31" r="1.9" fill="#4a382b"/>
-        <path d="M27.5 37q2.5 2.4 5 0" stroke="#4a382b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <circle cx="18.5" cy="37" r="3" fill="#ffc9de" opacity=".85"/>
-        <circle cx="41.5" cy="37" r="3" fill="#ffc9de" opacity=".85"/>
+      <svg class="bear" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="18.5" cy="19.5" r="7.4" fill="#fff" stroke="#6b5240" stroke-width="2.6"/>
+        <circle cx="18.5" cy="19.5" r="3.6" fill="#ffd9e6"/>
+        <circle cx="45.5" cy="19.5" r="7.4" fill="#fff" stroke="#6b5240" stroke-width="2.6"/>
+        <circle cx="45.5" cy="19.5" r="3.6" fill="#ffd9e6"/>
+        <ellipse cx="32" cy="37" rx="19" ry="16.6" fill="#fff" stroke="#6b5240" stroke-width="2.8"/>
+        <circle cx="25.4" cy="34.4" r="2.1" fill="#4a382b"/>
+        <circle cx="38.6" cy="34.4" r="2.1" fill="#4a382b"/>
+        <path d="M29.4 40.6q2.6 2.2 5.2 0" stroke="#4a382b" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+        <ellipse cx="19.6" cy="41" rx="3.6" ry="2.5" fill="#ffc9de" opacity=".85"/>
+        <ellipse cx="44.4" cy="41" rx="3.6" ry="2.5" fill="#ffc9de" opacity=".85"/>
       </svg>
       <h1>第 <em>10</em> 周课表</h1>
     </div>
